@@ -3,7 +3,6 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
-// Routes
 const authRoutes = require("./src/routes/authRoutes");
 const userRoutes = require("./src/routes/user.routes");
 const courseRoutes = require("./src/routes/course.routes");
@@ -16,53 +15,31 @@ const reviewRoutes = require("./src/routes/review.routes");
 
 const app = express();
 
-## /*
-
-## Security Middlewares
-
-*/
 app.use(helmet());
 
-// Allowed frontend origins
 const allowedOrigins = [
-"http://localhost:5173",
-"https://lms-frontend-two-ecru.vercel.app"
+  "http://localhost:5173",
+  "https://lms-frontend-two-ecru.vercel.app"
 ];
 
-// CORS configuration
 app.use(
-cors({
-origin: function (origin, callback) {
-if (!origin || allowedOrigins.includes(origin)) {
-callback(null, true);
-} else {
-callback(new Error("CORS not allowed"));
-}
-},
-credentials: true
-})
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS not allowed"));
+      }
+    },
+    credentials: true
+  })
 );
 
-## /*
-
-## Logging
-
-*/
 app.use(morgan("dev"));
 
-## /*
-
-## Body Parsers
-
-*/
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-## /*
-
-## API Routes
-
-*/
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
@@ -73,42 +50,27 @@ app.use("/api/progress", progressRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/reviews", reviewRoutes);
 
-## /*
-
-## Health Check
-
-*/
 app.get("/", (req, res) => {
-res.status(200).json({
-success: true,
-message: "LMS API is running"
+  res.status(200).json({
+    success: true,
+    message: "LMS API is running"
+  });
 });
-});
 
-## /*
-
-## 404 Handler
-
-*/
 app.use((req, res) => {
-res.status(404).json({
-success: false,
-message: "Route not found"
+  res.status(404).json({
+    success: false,
+    message: "Route not found"
+  });
 });
-});
 
-## /*
-
-## Global Error Handler
-
-*/
 app.use((err, req, res, next) => {
-console.error("Error:", err);
+  console.error("Error:", err);
 
-res.status(err.statusCode || 500).json({
-success: false,
-message: err.message || "Internal Server Error"
-});
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error"
+  });
 });
 
 module.exports = app;
