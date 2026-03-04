@@ -23,14 +23,23 @@ const app = express();
 */
 app.use(helmet());
 
-// CORS configuration (FIXED)
-const allowedOrigin =
-process.env.CLIENT_URL || "http://localhost:5173";
+// Allowed frontend origins
+const allowedOrigins = [
+"http://localhost:5173",
+"https://lms-frontend-two-ecru.vercel.app"
+];
 
+// CORS configuration
 app.use(
 cors({
-origin: allowedOrigin,
-credentials: true,
+origin: function (origin, callback) {
+if (!origin || allowedOrigins.includes(origin)) {
+callback(null, true);
+} else {
+callback(new Error("CORS not allowed"));
+}
+},
+credentials: true
 })
 );
 
@@ -72,7 +81,7 @@ app.use("/api/reviews", reviewRoutes);
 app.get("/", (req, res) => {
 res.status(200).json({
 success: true,
-message: "LMS API is running",
+message: "LMS API is running"
 });
 });
 
@@ -84,7 +93,7 @@ message: "LMS API is running",
 app.use((req, res) => {
 res.status(404).json({
 success: false,
-message: "Route not found",
+message: "Route not found"
 });
 });
 
@@ -98,7 +107,7 @@ console.error("Error:", err);
 
 res.status(err.statusCode || 500).json({
 success: false,
-message: err.message || "Internal Server Error",
+message: err.message || "Internal Server Error"
 });
 });
 
